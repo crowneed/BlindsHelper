@@ -3,6 +3,7 @@ package com.example.aa
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import com.example.aa.Util.PrefUtil
 
 class TimerReceiver : BroadcastReceiver() {
 
@@ -16,6 +17,11 @@ class TimerReceiver : BroadcastReceiver() {
 //            .build()
 //        val channelId = 2
 //        NotificationManagerCompat.from(context).notify(channelId, notif)
+        PrefUtil.setAlarmSetTime(0, context)
+        val blinds = PrefUtil.getBlindsState(context)
+        blinds?.pop()
+        PrefUtil.setBlindsState(blinds, context)
+
         val intent = Intent(context, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)

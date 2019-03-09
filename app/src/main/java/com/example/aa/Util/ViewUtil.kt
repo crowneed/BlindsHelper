@@ -8,5 +8,5 @@ fun TextView.setTextBlinds(currentBlinds : Deque<String>) {
         if (currentBlinds.isEmpty())
             MESSAGE_BLINDS_OUT_OF_LIMIT
         else
-            currentBlinds.peekFirst()
+            "Текущие блайнды: ${currentBlinds.peekFirst()}"
 }

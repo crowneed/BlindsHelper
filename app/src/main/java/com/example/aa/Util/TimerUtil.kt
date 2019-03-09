@@ -2,6 +2,7 @@ package com.example.aa.Util
 
 import android.content.Context
 import android.speech.tts.TextToSpeech
+import android.util.Log
 import android.widget.Toast
 import java.util.*
 
@@ -14,7 +15,7 @@ class CustomTextToSpeech {
     fun speak(blinds: Deque<String>) {
         if (ttsEnabled) {
             tts?.speak(
-                "Cтавки выросли. Блайнды ${if (blinds.size != 0) blinds.peekFirst() else "дальше считайте сами"}",
+                "Текущие блайнды ${if (blinds.size != 0) blinds.peekFirst() else "дальше считайте сами"}",
                 TextToSpeech.QUEUE_FLUSH,
                 null,
                 null
@@ -24,6 +25,8 @@ class CustomTextToSpeech {
 
     fun init(context: Context) {
         tts = TextToSpeech(context, TextToSpeech.OnInitListener {
+            val reqTTS = it
+            Log.d("LALALA", "$it")
             if (it == TextToSpeech.SUCCESS) {
                 if (tts?.isLanguageAvailable(Locale(Locale.getDefault().language))
                     == TextToSpeech.LANG_AVAILABLE

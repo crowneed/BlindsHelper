@@ -76,17 +76,17 @@ class PrefUtil {
             editor.apply()
         }
 
-        private const val CURRENT_BLIND = "com.resocoder.timer.current_blind"
+//        private const val CURRENT_BLIND = "com.resocoder.timer.current_blind"
 
-        fun setCurrentBlind(blind: String?, context: Context) {
-            val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
-            editor.putString(CURRENT_BLIND, blind)
-            editor.apply()
-        }
-        fun getCurrentBlind(context: Context): String? {
-            val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-            return preferences.getString(CURRENT_BLIND, "")
-        }
+//        fun setCurrentBlind(blind: String?, context: Context) {
+//            val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+//            editor.putString(CURRENT_BLIND, blind)
+//            editor.apply()
+//        }
+//        fun getCurrentBlind(context: Context): String? {
+//            val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+//            return preferences.getString(CURRENT_BLIND, "")
+//        }
 
         private const val ALARM_SET_TIME_ID = "com.resocoder.timer.time_id"
 

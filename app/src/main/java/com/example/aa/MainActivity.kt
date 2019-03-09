@@ -10,9 +10,8 @@ import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 import android.view.WindowManager
-import android.widget.TextView
-import com.example.aa.Util.CustomTextToSpeech
-import com.example.aa.Util.PrefUtil
+import com.example.aa.Util.*
+import java.util.concurrent.TimeUnit
 
 
 class MainActivity : AppCompatActivity() {
@@ -97,28 +96,18 @@ class MainActivity : AppCompatActivity() {
         //TODO:Можно ли это как-то сделать в самой сигнатуре метода, а не в теле? (типа по умолчанию)
         timerState = TimerState.Running
 
+        //TODO: Пишем текущий блайнд (без удаления из очереди) всегда при старте таймера
+        tv_blinds.setTextBlinds(blinds)
+
+        //TODO: Озвучивать текущий блайнд (без удаления из очереди) всегда при старте таймера
+        customTextToSpeech?.speak(blinds)
+
         //TODO: Начать таймер с определенным количеством секунд (берем общее время таймера и текущее из prefs)
-
-        //TODO: Пишем текущий блайнды всегда при старте таймера
-
-        //TODO: Озвучивать текущий блайнд всегда при старте таймера
-
-        //TODO: Начать таймер с определенным количеством секунд
-
-        if (blinds.isEmpty())
-            tv_blinds.text = "Текущие блайнды: запоминайте тоже сами"
-
-        if (secondsRemaining == timerLengthSeconds) {
-            PrefUtil.setCurrentBlind(if (blinds.isNotEmpty()) blinds.peekFirst() else "", this)
-            tv_blinds.text = "Текущие блайнды: ${if (blinds.isNotEmpty()) blinds.pop() else "запоминайте тоже сами"}"
-        }
-
-
-        timer = object : CountDownTimer(secondsRemaining * 1000, 500) {
+        timer = object : CountDownTimer(secondsRemaining * TIMER_ONE_SECOND, TIMER_TICK_INTERVAL) {
             override fun onFinish() = onTimerFinished()
 
             override fun onTick(millisUntilFinished: Long) {
-                secondsRemaining = millisUntilFinished / 1000
+                secondsRemaining = millisUntilFinished / TIMER_ONE_SECOND
                 updateCountdownUI()
             }
         }
@@ -138,6 +127,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateCountdownUI() {
+        //TODO: ТУТ ВРОДЕ ВСЕ НОРМ
         val minutesUntilFinished = secondsRemaining / 60
         val secondsInMinuteUntilFinished = secondsRemaining - minutesUntilFinished * 60
         val secondsStr = secondsInMinuteUntilFinished.toString()
@@ -150,13 +140,9 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         initTimer()
         removeAlarm(this)
-        val blindsTemp = PrefUtil.getBlindsState(this)
-        if (blindsTemp == null) {
-            initBlinds()
-        } else {
-            blinds = blindsTemp
-            val curBlind = PrefUtil.getCurrentBlind(this)
-            tv_blinds.text = if (!curBlind.isNullOrEmpty()) "Текущие блайнды: $curBlind" else ""
+
+        if (timerState != TimerState.Stopped){
+           tv_blinds.setTextBlinds(blinds)
         }
     }
 
@@ -170,20 +156,32 @@ class MainActivity : AppCompatActivity() {
         }
         PrefUtil.setPreviousTimerLengthSeconds(timerLengthSeconds, this)
         PrefUtil.setSecondsRemaining(secondsRemaining, this)
-        if (blinds.isEmpty()) pause()
+//        if (blinds.isEmpty()) pause()
         PrefUtil.setTimerState(timerState, this)
-
         PrefUtil.setBlindsState(blinds, this)
     }
 
     fun initTimer() {
+        customTextToSpeech = CustomTextToSpeech()
+        customTextToSpeech?.init(this)
+
+        //TODO: Сделать чтобы если нет записи в prefs возвращал не нул, а предопределенный список.
+        val blindsTemp = PrefUtil.getBlindsState(this)
+        if (blindsTemp == null) {
+            initBlinds()
+        } else {
+            blinds = blindsTemp
+        }
+
         timerState = PrefUtil.getTimerState(this)
 
+        //TODO: Если таймер не был остановлен, то берем предыдущую его макс длину
         if (timerState == TimerState.Stopped)
             setNewTimerLength()
         else
             setPreviousTimerLength()
 
+        //TODO: Если таймер не был остановлен, то берем из настроек сколько времени осталось
         secondsRemaining = if (timerState == TimerState.Running || timerState == TimerState.Paused)
             PrefUtil.getSecondsRemaining(this)
         else
@@ -193,21 +191,22 @@ class MainActivity : AppCompatActivity() {
         if (alarmSetTime > 0)
             secondsRemaining -= nowSeconds - alarmSetTime
 
-        if (timerState == TimerState.Running)
+        if (secondsRemaining <= 0)
+            onTimerFinished()
+        else if (timerState == TimerState.Running)
             startTimer()
 
         updateButtons()
         updateCountdownUI()
 //        val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 //        mp = MediaPlayer.create(this, soundUri)
-
-        customTextToSpeech = CustomTextToSpeech()
-        customTextToSpeech?.init(applicationContext)
     }
 
     fun onTimerFinished() {
 //        mp.start()
-        customTextToSpeech?.speak(blinds)
+//        customTextToSpeech?.speak(blinds)
+        if (blinds.isNotEmpty())
+            blinds.pop()
 
         timer?.cancel()
         setNewTimerLength()
@@ -225,7 +224,7 @@ class MainActivity : AppCompatActivity() {
             timer?.cancel()
         timerState = TimerState.Stopped
         setNewTimerLength()
-        PrefUtil.setCurrentBlind("", this)
+//        PrefUtil.setCurrentBlind("", this)
         PrefUtil.setBlindsState(null, this)
         PrefUtil.setSecondsRemaining(timerLengthSeconds, this)
         secondsRemaining = timerLengthSeconds
@@ -234,10 +233,6 @@ class MainActivity : AppCompatActivity() {
         updateCountdownUI()
     }
 
-    override fun onDestroy() {
-//        customTextToSpeech?.removeListener()
-        super.onDestroy()
-    }
     companion object {
         fun setAlarm(context: Context, nowSeconds: Long, secondsRemaining: Long): Long {
             val wakeUpTime = (nowSeconds + secondsRemaining) * 1000
@@ -264,5 +259,4 @@ class MainActivity : AppCompatActivity() {
     enum class TimerState {
         Stopped, Paused, Running
     }
-
 }
