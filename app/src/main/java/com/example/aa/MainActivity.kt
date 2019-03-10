@@ -6,17 +6,15 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
-import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_main.*
-import java.util.*
 import android.view.WindowManager
+import androidx.appcompat.app.AppCompatActivity
 import com.example.aa.Util.*
 import io.reactivex.Completable
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import java.util.concurrent.TimeUnit
+import kotlinx.android.synthetic.main.activity_main.*
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -134,10 +132,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateCountdownUI() {
         //TODO: ТУТ ВРОДЕ ВСЕ НОРМ
+        //TODO: не, нихуя))
         val minutesUntilFinished = secondsRemaining / 60
         val secondsInMinuteUntilFinished = secondsRemaining - minutesUntilFinished * 60
         val secondsStr = secondsInMinuteUntilFinished.toString()
-        textView.text = "$minutesUntilFinished:${if (secondsStr.length == 2) secondsStr else "0$secondsStr"}"
+        val secondsUntilFinished = if (secondsStr.length == 2) secondsStr else "0$secondsStr"
+        textView.text = getString(R.string.timeUntilFinished, minutesUntilFinished, secondsUntilFinished)
+//        textView.text = "$minutesUntilFinished:${if (secondsStr.length == 2) secondsStr else "0$secondsStr"}"
         pb_timer.progress = (timerLengthSeconds - secondsRemaining).toInt()
     }
 
@@ -147,8 +148,8 @@ class MainActivity : AppCompatActivity() {
         initTimer()
         removeAlarm(this)
 
-        if (timerState != TimerState.Stopped){
-           tv_blinds.setTextBlinds(blinds)
+        if (timerState != TimerState.Stopped) {
+            tv_blinds.setTextBlinds(blinds)
         }
     }
 
@@ -177,9 +178,10 @@ class MainActivity : AppCompatActivity() {
             .subscribe {
                 val fromReceiver = intent.getBooleanExtra(
                     "TAG_FROM_TIMER_RECEIVER",
-                    false)
+                    false
+                )
 //                if (fromReceiver)
-                    customTextToSpeech?.speak(blinds)
+                customTextToSpeech?.speak(blinds)
             }
 
 //        customTextToSpeech = CustomTextToSpeech()
@@ -240,7 +242,7 @@ class MainActivity : AppCompatActivity() {
         blinds.clear()
         initBlinds()
         tv_blinds.text = ""
-        if (timer != null)
+        if (timer != null)                        //TODO Убрать это лишнее условие, нах тебе тогда timer?.cancel()
             timer?.cancel()
         timerState = TimerState.Stopped
         setNewTimerLength()

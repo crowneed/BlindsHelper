@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Blinds Helper</string>
+    <string name="timeUntilFinished">%d:%s</string>
 </resources>
