@@ -189,8 +189,10 @@ class MainActivity : AppCompatActivity() {
                     "TAG_FROM_TIMER_RECEIVER",
                     false
                 )
-                if (fromReceiver)
+                if (fromReceiver) {
+                    intent.putExtra("TAG_FROM_TIMER_RECEIVER", false)
                     customTextToSpeech?.speak(blinds)
+                }
             }
 
 //        customTextToSpeech = CustomTextToSpeech()
