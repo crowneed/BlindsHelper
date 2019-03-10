@@ -242,8 +242,7 @@ class MainActivity : AppCompatActivity() {
         blinds.clear()
         initBlinds()
         tv_blinds.text = ""
-        if (timer != null)                        //TODO Убрать это лишнее условие, нах тебе тогда timer?.cancel()
-            timer?.cancel()
+        timer?.cancel()
         timerState = TimerState.Stopped
         setNewTimerLength()
 //        PrefUtil.setCurrentBlind("", this)
