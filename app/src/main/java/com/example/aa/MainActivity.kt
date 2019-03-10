@@ -4,6 +4,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.WindowManager
@@ -31,11 +32,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         //TODO: Написать работающий код для открытия активности из сна для всех API
-        val win = window
-//        setShowWhenLocked(true)
-//        setTurnScreenOn(true)
-        win.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD)
-        win.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
+        openWindowActivity()
         setContentView(R.layout.activity_main)
 
         fab_play.setOnClickListener {
@@ -48,6 +45,18 @@ class MainActivity : AppCompatActivity() {
         fab_on_off.setOnClickListener {
             stopTimer()
             updateButtons()
+        }
+    }
+
+    private fun openWindowActivity() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            setShowWhenLocked(true)
+            setTurnScreenOn(true)
+        } else {
+            window.apply {
+                addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD)
+                addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
+            }
         }
     }
 
@@ -180,8 +189,8 @@ class MainActivity : AppCompatActivity() {
                     "TAG_FROM_TIMER_RECEIVER",
                     false
                 )
-//                if (fromReceiver)
-                customTextToSpeech?.speak(blinds)
+                if (fromReceiver)
+                    customTextToSpeech?.speak(blinds)
             }
 
 //        customTextToSpeech = CustomTextToSpeech()

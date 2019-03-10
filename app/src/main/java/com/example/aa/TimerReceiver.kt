@@ -18,8 +18,10 @@ class TimerReceiver : BroadcastReceiver() {
 //        val channelId = 2
 //        NotificationManagerCompat.from(context).notify(channelId, notif)
         PrefUtil.setAlarmSetTime(0, context)
+        PrefUtil.setSecondsRemaining(PrefUtil.getTimerLength(context).toLong() * 6L, context)
         val blinds = PrefUtil.getBlindsState(context)
-        blinds?.pop()
+        if (blinds?.isNotEmpty() == true)
+            blinds.pop()
         PrefUtil.setBlindsState(blinds, context)
 
         val intent = Intent(context, MainActivity::class.java)
