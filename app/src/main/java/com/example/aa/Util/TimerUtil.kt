@@ -2,8 +2,8 @@ package com.example.aa.Util
 
 import android.content.Context
 import android.speech.tts.TextToSpeech
-import android.util.Log
 import android.widget.Toast
+import io.reactivex.CompletableEmitter
 import java.util.*
 
 class CustomTextToSpeech {
@@ -23,10 +23,8 @@ class CustomTextToSpeech {
         }
     }
 
-    fun init(context: Context) {
+    fun init(context: Context, emitter: CompletableEmitter) {
         tts = TextToSpeech(context, TextToSpeech.OnInitListener {
-            val reqTTS = it
-            Log.d("LALALA", "$it")
             if (it == TextToSpeech.SUCCESS) {
                 if (tts?.isLanguageAvailable(Locale(Locale.getDefault().language))
                     == TextToSpeech.LANG_AVAILABLE
@@ -38,6 +36,8 @@ class CustomTextToSpeech {
                 tts?.setPitch(1.3f)
                 tts?.setSpeechRate(1f)
                 ttsEnabled = true
+                emitter.onComplete()
+//                tts?.speak("Как же долго я создавался", TextToSpeech.QUEUE_FLUSH, null, null)
             } else if (it == TextToSpeech.ERROR) {
                 Toast.makeText(context, "ОШИБКА ОЗВУЧИВАНИЯ", Toast.LENGTH_LONG).show()
                 ttsEnabled = false

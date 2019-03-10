@@ -23,6 +23,7 @@ class TimerReceiver : BroadcastReceiver() {
         PrefUtil.setBlindsState(blinds, context)
 
         val intent = Intent(context, MainActivity::class.java)
+        intent.putExtra("TAG_FROM_TIMER_RECEIVER", true)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
     }

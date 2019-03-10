@@ -11,6 +11,11 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 import android.view.WindowManager
 import com.example.aa.Util.*
+import io.reactivex.Completable
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
 
@@ -22,6 +27,7 @@ class MainActivity : AppCompatActivity() {
     private var timerState = TimerState.Stopped
     private var customTextToSpeech: CustomTextToSpeech? = null
     private var blinds = ArrayDeque<String>()
+    private var disposable: Disposable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -162,8 +168,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun initTimer() {
-        customTextToSpeech = CustomTextToSpeech()
-        customTextToSpeech?.init(this)
+        disposable = Completable.create {
+            customTextToSpeech = CustomTextToSpeech()
+            customTextToSpeech?.init(this, it)
+        }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                val fromReceiver = intent.getBooleanExtra(
+                    "TAG_FROM_TIMER_RECEIVER",
+                    false)
+//                if (fromReceiver)
+                    customTextToSpeech?.speak(blinds)
+            }
+
+//        customTextToSpeech = CustomTextToSpeech()
+//        customTextToSpeech?.init(this)
 
         //TODO: Сделать чтобы если нет записи в prefs возвращал не нул, а предопределенный список.
         val blindsTemp = PrefUtil.getBlindsState(this)
@@ -231,6 +251,11 @@ class MainActivity : AppCompatActivity() {
 
         updateButtons()
         updateCountdownUI()
+    }
+
+    override fun onDestroy() {
+        disposable?.dispose()
+        super.onDestroy()
     }
 
     companion object {
