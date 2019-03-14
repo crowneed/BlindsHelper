@@ -1,7 +1,5 @@
 package com.example.aa
 
-import android.app.KeyguardManager
-import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
@@ -16,14 +14,23 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         //TODO: Написать работающий код для открытия активности из сна для всех API
-        openWindowActivity()
+        val fromReceiver = this.intent?.getBooleanExtra(
+            "TAG_FROM_TIMER_RECEIVER",
+            false
+        ) ?: false
+        if (fromReceiver) {
+            openWindowActivity()
+        }
 
-        val fragmentManager = supportFragmentManager
-        fragmentManager.beginTransaction().replace(R.id.fl_content, timerFragment).commit()
+        if (savedInstanceState == null) {
+            val fragmentManager = supportFragmentManager
+            fragmentManager.beginTransaction().replace(R.id.fl_content, timerFragment).commit()
 
 
-        setContentView(R.layout.activity_main)
-        setSupportActionBar(toolbar)
+            setContentView(R.layout.activity_main)
+            setSupportActionBar(toolbar)
+        }
+
 
 //        val drawerToggle: ActionBarDrawerToggle = object : ActionBarDrawerToggle(
 //            this,
