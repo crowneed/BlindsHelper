@@ -168,15 +168,15 @@ class TimerFragment : Fragment() {
         PrefUtil.setBlindsState(blinds, context)
     }
 
-    fun initTimer() {
+    private fun initTimer() {
         disposable = Completable.create {
             customTextToSpeech = CustomTextToSpeech()
-            customTextToSpeech?.init(context, it)
+            customTextToSpeech?.init(activity?.applicationContext, it)
         }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                val act= activity
+                val act = activity
                 val intentM = act?.intent
                 val fromReceiver = intentM?.getBooleanExtra(
                     "TAG_FROM_TIMER_RECEIVER",
@@ -260,9 +260,9 @@ class TimerFragment : Fragment() {
 
     override fun onDestroy() {
         disposable?.dispose()
-        fab_on_off.setOnClickListener(null)
-        fab_pause.setOnClickListener(null)
-        fab_play.setOnClickListener(null)
+        fab_on_off?.setOnClickListener(null)
+        fab_pause?.setOnClickListener(null)
+        fab_play?.setOnClickListener(null)
         super.onDestroy()
     }
 

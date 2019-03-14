@@ -1,5 +1,7 @@
 package com.example.aa
 
+import android.app.KeyguardManager
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
@@ -8,6 +10,7 @@ import kotlinx.android.synthetic.main.test_activity.*
 
 
 class MainActivity : AppCompatActivity() {
+    private val timerFragment = TimerFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -16,7 +19,7 @@ class MainActivity : AppCompatActivity() {
         openWindowActivity()
 
         val fragmentManager = supportFragmentManager
-        fragmentManager.beginTransaction().replace(R.id.fl_content, TimerFragment()).commit()
+        fragmentManager.beginTransaction().replace(R.id.fl_content, timerFragment).commit()
 
 
         setContentView(R.layout.activity_main)
@@ -100,11 +103,25 @@ class MainActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true)
             setTurnScreenOn(true)
+//            val keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+//            keyguardManager.requestDismissKeyguard(this, null)
         } else {
             window.apply {
                 addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD)
                 addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
             }
         }
+    }
+
+    private fun clearFlags() {
+        window.apply {
+            clearFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD)
+            clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
+        }
+    }
+
+    override fun onDestroy() {
+        clearFlags()
+        super.onDestroy()
     }
 }

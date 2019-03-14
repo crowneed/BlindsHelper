@@ -41,6 +41,7 @@ class CustomTextToSpeech {
             } else if (it == TextToSpeech.ERROR) {
                 Toast.makeText(context, "ОШИБКА ОЗВУЧИВАНИЯ", Toast.LENGTH_LONG).show()
                 ttsEnabled = false
+                emitter.onError(Throwable())
             }
         })
     }
