@@ -25,9 +25,15 @@
             android:layout_weight="1">
         <!-- Your content area -->
         <FrameLayout
-                android:id="@+id/fl_content"
+                android:id="@+id/content_frame"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
+
+            <TextView
+                    android:text="Your content goes here"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
         </FrameLayout>
         <!-- The navigation view -->
         <com.google.android.material.navigation.NavigationView

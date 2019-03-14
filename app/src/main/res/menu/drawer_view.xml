@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+                android:id="@+id/item_menu_settings"
+                android:icon="@drawable/ic_settings"
+                android:title="Настройки" />
+        <!--<item-->
+                <!--android:id="@+id/item_menu_statistics"-->
+                <!--android:icon="@drawable/icon_statistics_1"-->
+                <!--android:title="Статистика" />-->
+        <!--<item-->
+                <!--android:id="@+id/item_menu_eval_cards"-->
+                <!--android:icon="@drawable/icon_two_aces"-->
+                <!--android:title="Оценка стартовой руки" />-->
+    </group>
+
+    <!--<item android:title="Прочее">-->
+        <!--<menu>-->
+            <!--<group android:checkableBehavior="single">-->
+                <!--<item-->
+                        <!--android:icon="@drawable/ic_exit"-->
+                        <!--android:title="Выход" />-->
+            <!--</group>-->
+        <!--</menu>-->
+    <!--</item>-->
+</menu>

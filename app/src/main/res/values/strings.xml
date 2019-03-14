@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Blinds Helper</string>
     <string name="timeUntilFinished">%d:%s</string>
+    <string name="test_opened">opened</string>
+    <string name="test_closed">closed</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

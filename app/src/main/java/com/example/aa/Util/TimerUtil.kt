@@ -23,7 +23,7 @@ class CustomTextToSpeech {
         }
     }
 
-    fun init(context: Context, emitter: CompletableEmitter) {
+    fun init(context: Context?, emitter: CompletableEmitter) {
         tts = TextToSpeech(context, TextToSpeech.OnInitListener {
             if (it == TextToSpeech.SUCCESS) {
                 if (tts?.isLanguageAvailable(Locale(Locale.getDefault().language))
